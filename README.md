@@ -3,6 +3,9 @@ node-smpp
 SMPP client and server implementation in node.js.
 
 [![Build Status](https://travis-ci.org/farhadi/node-smpp.png)](https://travis-ci.org/farhadi/node-smpp)
+[![Dependency Status](https://david-dm.org/farhadi/node-smpp.svg)](https://david-dm.org/farhadi/node-smpp)
+[![devDependency Status](https://david-dm.org/farhadi/node-smpp/dev-status.svg)](https://david-dm.org/farhadi/node-smpp#info=devDependencies)
+[![Coverage Status](https://coveralls.io/repos/github/farhadi/node-smpp/badge.svg?branch=master)](https://coveralls.io/github/farhadi/node-smpp?branch=master)
 
 Introduction
 ------------
@@ -29,7 +32,7 @@ Usage
 
 ``` javascript
 var smpp = require('smpp');
-var session = smpp.connect('example.com', 2775);
+var session = smpp.connect('smpp://example.com:2775');
 session.bind_transceiver({
 	system_id: 'YOUR_SYSTEM_ID',
 	password: 'YOUR_PASSWORD'
@@ -100,10 +103,16 @@ or `message_payload` parameter to bypass automatic message encoding.
 API
 -------
 
-### smpp.connect([host], [port])
-Creates a new smpp session to the given `host` and `port`. If `port` is omited,
-the default smpp port (2775) will be used. If `host` is also omitted, `localhost`
-will be assumed.
+### smpp.connect(url, [callback])
+Creates a new smpp session using the specified connection url.
+`url` must be a string in this format: `smpp://host:port`. To establish a secure
+smpp connection use `ssmpp` as scheme like in `ssmpp://host:port`.
+If `port` is omitted in the url, the default port (2775 for smpp and 3550 for
+secure smpp) will be used.
+If called without arguments, `smpp://localhost:2775` will be assumed.
+
+The `callback`, if specified, will be added as a listener for the `connect`
+event in plain connections and `secureConnect` event in secure connections.
 
 ### smpp.Session
 This is the base object for a SMPP session. sessions can be created by calling
@@ -152,6 +161,10 @@ session.send(pdu, callback);
 #### Event: 'connect'
 Emitted when the session connection successfully is established.
 
+#### Event: 'secureConnect'
+The `secureConnect` event is emitted after the handshaking process for
+a secure connection has successfully completed.
+
 #### Event: 'close'
 Emitted when the connection is fully closed.
 
@@ -172,9 +185,10 @@ Emitted upon receiving an unknown pdu.
 When a pdu is received, after emitting the `'pdu'` event, an event with the same
 name as the operation of that pdu will also be emitted.
 
-### smpp.createServer([sessionListener])
+### smpp.createServer([options], [sessionListener])
 Creates a new SMPP server. The `sessionListener` argument is automatically set
 as a listener for the 'session' event.
+If options include `key` and `cert`, a TLS secured server will be created.
 
 ### smpp.Server
 The base object for a SMPP server created with `smpp.createServer()`.
@@ -270,8 +284,8 @@ session.on('enquire_link', function(pdu) {
 
 Roadmap
 -------
-* Support for secure sessions using TLS.
 * More test coverage.
+* Add some usage examples (e.g client, server, and cluster examples)
 
 License
 -------

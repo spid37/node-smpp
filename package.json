@@ -1,6 +1,6 @@
 {
   "name": "smpp",
-  "version": "0.2.0",
+  "version": "0.3.1",
   "description": "SMPP client and server implementation in node.js",
   "author": "Ali Farhadi <a.farhadi@gmail.com>",
   "engines": {
@@ -12,10 +12,17 @@
     "url": "https://github.com/farhadi/node-smpp.git"
   },
   "license": "MIT",
+  "files": [
+    "lib/",
+    "index.js"
+  ],
   "scripts": {
+    "cover": "istanbul cover _mocha",
     "test": "mocha"
   },
   "devDependencies": {
+    "coveralls": "^2.11.9",
+    "istanbul": "^0.4.3",
     "mocha": "2.x"
   },
   "dependencies": {
